@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stream Smart</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+
+  <!-- Person 2: Styles -->
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+  <div class="container">
+
+    <header>
+  <div class="badge">EC606 — ECLIPSE 6.0</div>
+  <h1>Stream<span>Smart</span></h1>
+  <p class="tagline">// adaptive education streaming for low-bandwidth India</p>
+  
+  <!-- ADD THIS BUTTON - Copy exactly from here -->
+  <div style="margin-top: 20px; text-align: center;">
+    <button onclick="goToVideoConference()" style="background: #00ff88; color: #000; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;">
+      🎥 START VIDEO CONFERENCE
+    </button>
+  </div>
+  <!-- Stop copying here -->
+</header>
+
+    <!-- ═══ LIVE BANDWIDTH INDICATOR ═══ -->
+    <div class="bandwidth-bar">
+      <span class="bw-label">BANDWIDTH</span>
+      <div class="bw-track">
+        <div class="bw-fill" id="bwFill"></div>
+      </div>
+      <span class="mode-tag" id="modeTag">📹 VIDEO</span>
+    </div>
+
+    <!-- ═══ FEATURE TABS ═══ -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('transcribe', this)">🎙 TRANSCRIBE</button>
+      <button class="tab" onclick="switchTab('delta', this)">⚡ DELTA STREAM</button>
+      <button class="tab" onclick="switchTab('bandwidth', this)">📶 AUTO SWITCH</button>
+      <button class="tab" onclick="switchTab('analytics', this)">📊 ANALYTICS</button>  
+    <button class="tab" onclick="switchTab('avatar', this)">🤖 AI AVATAR</button><!-- NEW -->
+</div>
+
+    <!-- Back to Landing Page Button -->
+<div style="position: fixed; top: 20px; left: 20px; z-index: 100;">
+    <button onclick="goToLanding()" style="background: #141414; border: 1px solid #2a2a2a; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-family: monospace;">
+        ← Back to Home
+    </button>
+</div>
+
+    <!-- ═══ PANEL 1: Transcription ═══ -->
+    <div class="panel active" id="panel-transcribe">
+
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fileInput" accept="audio/*,video/*" onchange="handleFile(this)"/>
+        <span class="upload-icon">🎬</span>
+        <div class="upload-title">Drop a lecture video or audio file</div>
+        <div class="upload-sub">mp4, mp3, wav, m4a, webm supported</div>
+      </div>
+
+      <div id="fileName"></div>
+      <!-- Video Preview -->
+<video id="lectureVideo" controls style="width:100%; max-height:400px; margin-top:15px;"></video>
+
+      <button class="btn" id="transcribeBtn" onclick="transcribe()" disabled>
+        TRANSCRIBE LECTURE →
+      </button>
+
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-label">
+          <span>TRANSCRIBING...</span>
+          <span id="progressTime">0s</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="transcript-box" id="transcriptBox">
+        <div class="transcript-header">
+          <span class="transcript-title">// TRANSCRIPT OUTPUT</span>
+          <button class="copy-btn" onclick="copyTranscript()">COPY</button>
+        </div>
+        <div class="transcript-text" id="transcriptText"></div>
+      </div>
+
+    </div>
+
+    <!-- ═══ PANEL 2: Delta Streaming Visual ═══ -->
+<div class="panel" id="panel-delta">
+  
+  <div class="delta-demo">
+    
+    <!-- Normal Streaming (Left) -->
+    <div class="stream-box">
+      <div class="stream-label">NORMAL STREAMING</div>
+      <div class="stream-circle circle-normal" id="normalCircle">
+        <span id="normalDataRate">4 MB/s</span>
+        <span class="circle-label">full frame</span>
+      </div>
+      <div class="stream-info">
+        Sends entire frame<br/>30× per second
+      </div>
+      <div class="data-counter" style="margin-top: 10px; font-size: 11px; color: #ff3c6e;">
+        Total: <span id="normalTotal">0</span> MB
+      </div>
+    </div>
+
+    <!-- Delta Streaming (Right) -->
+    <div class="stream-box ours">
+      <div class="stream-label">STREAM SMART ✦</div>
+      <div class="stream-circle circle-ours" id="deltaCircle">
+        <span id="deltaDataRate" style="color:#000">1.2 MB/s</span>
+        <span class="circle-label" style="color:#000">delta only</span>
+      </div>
+      <div class="stream-info">
+        Sends only<br/>what changed
+      </div>
+      <div class="data-counter" style="margin-top: 10px; font-size: 11px; color: #00c8ff;">
+        Total: <span id="deltaTotal">0</span> MB
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="saving-badge" id="savingBadge">
+    ⚡ UP TO 70% LESS DATA — background sent once, only face + hands stream continuously
+  </div>
+
+  <!-- Demo Controls -->
+  <div style="margin-top: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+    <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--accent);">🎮 TRY THE DEMO</h3>
+    
+    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+  <button onclick="goToVideoConference()" class="btn" style="margin: 0; padding: 10px 20px; background: #00ff88;">▶ START VIDEO CALL</button>
+  <button onclick="simulateDeltaOffline()" class="btn" style="margin: 0; padding: 10px 20px; background: #ffaa00;">📊 SHOW SAVINGS</button>
+  <button onclick="resetDeltaDemo()" class="btn" style="margin: 0; padding: 10px 20px; background: #666;">🔄 RESET DEMO</button>
+</div>
+    <div style="margin-top: 15px;">
+      <div style="font-size: 12px; margin-bottom: 10px;">Background (sent once):</div>
+      <div style="background: #2a2a2a; border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+        <div style="background: #00c8ff20; border: 1px solid #00c8ff; border-radius: 4px; padding: 8px; text-align: center;">
+          🖼 STATIC BACKGROUND
+        </div>
+      </div>
+      
+      <div style="font-size: 12px; margin-bottom: 10px;">Changes sent (every frame):</div>
+      <div style="display: flex; gap: 10px;">
+        <div style="flex: 1; background: #2a2a2a; border-radius: 8px; padding: 10px; text-align: center;">
+          <div style="font-size: 20px;">👤</div>
+          <div style="font-size: 10px;">Face position</div>
+        </div>
+        <div style="flex: 1; background: #2a2a2a; border-radius: 8px; padding: 10px; text-align: center;">
+          <div style="font-size: 20px;">🖐</div>
+          <div style="font-size: 10px;">Hand gestures</div>
+        </div>
+        <div style="flex: 1; background: #2a2a2a; border-radius: 8px; padding: 10px; text-align: center;">
+          <div style="font-size: 20px;">✏️</div>
+          <div style="font-size: 10px;">Board writing</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="savingIndicator" style="margin-top: 15px; padding: 10px; background: #00c8ff10; border-radius: 8px; text-align: center; display: none;">
+      <span id="savingPercent">0</span>% data saved with delta streaming!
+    </div>
+  </div>
+
+</div>
+
+    <!-- ═══ PANEL 3: Bandwidth Simulation ═══ -->
+    <div class="panel" id="panel-bandwidth">
+
+      <div class="bw-sim">
+        <h3>// DRAG TO SIMULATE BANDWIDTH CONDITIONS</h3>
+
+        <div class="slider-wrap">
+          <label>
+            <span>Connection Speed</span>
+            <span id="bwValue" class="bw-value-text">3.5 Mbps</span>
+          </label>
+          <input type="range" min="0" max="100" value="70" id="bwSlider" oninput="updateBandwidth(this.value)"/>
+        </div>
+        <div style="margin-top:12px; display:flex; align-items:center; gap:10px;">
+  <input type="checkbox" id="autoSwitch" />
+  <label for="autoSwitch" style="font-size:13px; color:var(--muted);">Enable Live Autoswitch</label>
+</div>
+
+        <div class="mode-display video" id="modeDisplay">
+          <div class="mode-icon" id="modeIcon">📹</div>
+          <div class="mode-name" id="modeName">VIDEO MODE</div>
+          <div class="mode-desc" id="modeDescText">Full video stream with delta compression active</div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div><!-- /.container -->
+
+  <!-- Person 3: JavaScript -->
+  <script src="script.js"></script>
+<link rel="stylesheet" href="style.css">
+</body>
+</html> 
+<button onclick="goToLanding()" style="position: fixed; top: 20px; left: 20px; background: #141414; border: 1px solid #2a2a2a; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+    ← Back to Home
+</button>
+<!-- Add as 4th tab after AUTO SWITCH -->
+
+<!-- ═══ PANEL 4: Analytics Dashboard ═══ -->
+<div class="panel" id="panel-analytics">
+  <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+    
+    <div class="stat-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center;">
+      <div style="font-size: 36px; margin-bottom: 10px;">💾</div>
+      <div style="font-size: 28px; font-weight: bold; color: var(--accent);" id="dataSaved">0</div>
+      <div style="font-size: 12px; color: var(--muted);">MB Saved</div>
+    </div>
+    
+    <div class="stat-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center;">
+      <div style="font-size: 36px; margin-bottom: 10px;">📝</div>
+      <div style="font-size: 28px; font-weight: bold; color: var(--accent);" id="transcriptsCount">0</div>
+      <div style="font-size: 12px; color: var(--muted);">Lectures Transcribed</div>
+    </div>
+    
+    <div class="stat-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center;">
+      <div style="font-size: 36px; margin-bottom: 10px;">💰</div>
+      <div style="font-size: 28px; font-weight: bold; color: #00ff88;" id="moneySaved">0</div>
+      <div style="font-size: 12px; color: var(--muted);">Rupees Saved</div>
+    </div>
+    
+    <div class="stat-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center;">
+      <div style="font-size: 36px; margin-bottom: 10px;">⚡</div>
+      <div style="font-size: 28px; font-weight: bold; color: #ffaa00;" id="avgSavings">0</div>
+      <div style="font-size: 12px; color: var(--muted);">Average Savings %</div>
+    </div>
+    
+  </div>
+  
+  <!-- Bandwidth Usage Graph -->
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+    <h3 style="margin-bottom: 15px;">📈 Bandwidth Usage Comparison</h3>
+    <div style="height: 200px; position: relative; display: flex; align-items: flex-end; gap: 40px; justify-content: center;">
+      
+      <!-- Normal Streaming Bar -->
+      <div style="flex: 1; text-align: center;">
+        <div style="background: #ff3c6e; width: 100%; height: 0px; transition: height 0.5s; border-radius: 8px 8px 0 0;" id="normalBar"></div>
+        <div style="margin-top: 10px; font-size: 12px;">Normal</div>
+        <div style="font-size: 11px; color: var(--muted);" id="normalBarValue">0 MB</div>
+      </div>
+      
+      <!-- Delta Streaming Bar -->
+      <div style="flex: 1; text-align: center;">
+        <div style="background: #00c8ff; width: 100%; height: 0px; transition: height 0.5s; border-radius: 8px 8px 0 0;" id="deltaBar"></div>
+        <div style="margin-top: 10px; font-size: 12px;">Delta</div>
+        <div style="font-size: 11px; color: var(--muted);" id="deltaBarValue">0 MB</div>
+      </div>
+      
+      <!-- Savings Bar -->
+      <div style="flex: 1; text-align: center;">
+        <div style="background: #00ff88; width: 100%; height: 0px; transition: height 0.5s; border-radius: 8px 8px 0 0;" id="savingsBar"></div>
+        <div style="margin-top: 10px; font-size: 12px;">Saved</div>
+        <div style="font-size: 11px; color: var(--muted);" id="savingsBarValue">0 MB</div>
+      </div>
+      
+    </div>
+  </div>
+  
+  <!-- Recent Activity -->
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+    <h3 style="margin-bottom: 15px;">🕐 Recent Activity</h3>
+    <div id="activityList" style="max-height: 200px; overflow-y: auto;">
+      <div style="color: var(--muted); text-align: center; padding: 20px;">No activity yet. Start streaming or transcribe a lecture!</div>
+    </div>
+  </div>
+  
+  <!-- Reset Button -->
+  <div style="margin-top: 20px; text-align: center;">
+    <button onclick="resetAnalytics()" class="btn" style="background: #ff3c6e;">Reset Analytics</button>
+  </div>
+</div>
+<!-- ═══ PANEL: AI AVATAR ═══ -->
+<div class="panel" id="panel-avatar">
+  
+  <!-- Upload Section -->
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+    <h3 style="color: var(--accent); margin-bottom: 15px;">🎭 AI Avatar Creator</h3>
+    <p style="color: var(--muted); font-size: 13px; margin-bottom: 20px;">
+      Upload a video of yourself. Our AI will extract your face and create an avatar that mimics your expressions!
+    </p>
+    
+    <!-- Upload Zone -->
+    <div id="avatarUploadZone" style="border: 2px dashed var(--border); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer;">
+      <input type="file" id="avatarVideoInput" accept="video/*" style="display: none;" onchange="processVideoForAvatar(this)">
+      <div onclick="document.getElementById('avatarVideoInput').click()" style="cursor: pointer;">
+        <div style="font-size: 48px; margin-bottom: 10px;">🎥</div>
+        <div style="font-weight: bold;">Upload your video</div>
+        <div style="font-size: 12px; color: var(--muted); margin-top: 5px;">MP4, MOV, AVI (Max 50MB)</div>
+      </div>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div id="avatarProcessing" style="display: none; text-align: center; padding: 20px;">
+      <div style="animation: pulse 1s infinite;">🔄 AI is analyzing your video and creating avatar...</div>
+      <div style="font-size: 12px; color: var(--muted); margin-top: 10px;">Extracting face, voice, and expressions</div>
+    </div>
+  </div>
+  
+  <!-- Avatar Preview Section -->
+  <div id="avatarPreview" style="display: none;">
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+      <h3 style="color: #00ff88; margin-bottom: 15px;">🤖 Your AI Avatar</h3>
+      
+      <!-- Avatar Canvas -->
+      <div style="text-align: center; margin-bottom: 20px;">
+        <canvas id="avatarCanvas" width="300" height="300" style="width: 100%; max-width: 300px; height: auto; background: #1a1f2e; border-radius: 20px; border: 2px solid #00ff88;"></canvas>
+      </div>
+      
+      <!-- Avatar Stats -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <div style="background: var(--bg); padding: 10px; border-radius: 8px; text-align: center;">
+          <div style="font-size: 11px; color: var(--muted);">NORMAL VIDEO</div>
+          <div style="font-size: 20px; font-weight: bold; color: #ff3c6e;" id="normalDataRate">6,000</div>
+          <div style="font-size: 10px;">KB/s</div>
+        </div>
+        <div style="background: var(--bg); padding: 10px; border-radius: 8px; text-align: center;">
+          <div style="font-size: 11px; color: var(--muted);">AVATAR MODE</div>
+          <div style="font-size: 20px; font-weight: bold; color: #00ff88;" id="avatarDataRate">50</div>
+          <div style="font-size: 10px;">KB/s</div>
+        </div>
+      </div>
+      
+      <!-- Savings Bar -->
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+          <span style="font-size: 12px;">💾 DATA SAVED</span>
+          <span style="font-size: 12px; color: #00ff88;" id="savingsPercent">99.2%</span>
+        </div>
+        <div style="background: var(--border); height: 8px; border-radius: 4px; overflow: hidden;">
+          <div id="savingsBar" style="width: 99.2%; height: 100%; background: linear-gradient(90deg, #00ff88, #00c8ff);"></div>
+        </div>
+      </div>
+      
+      <!-- Controls -->
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button onclick="playAvatarWithAudio()" class="btn" style="background: #00ff88; color: #000;">▶ Play Avatar</button>
+        <button onclick="stopAvatar()" class="btn" style="background: #ff3c6e; margin: 0;">⏹ Stop</button>
+        <button onclick="resetAvatar()" class="btn" style="background: #666; margin: 0;">🔄 Reset</button>
+      </div>
+      
+      <div id="avatarStatus" style="margin-top: 15px; text-align: center; font-size: 12px; color: var(--accent);">
+        ✅ Avatar ready! Click play to see your AI avatar in action.
+      </div>
+    </div>
+  </div>
+  
+  <!-- Explanation -->
+  <div style="margin-top: 20px; background: #00ff8810; border: 1px solid #00ff8830; border-radius: 12px; padding: 15px;">
+    <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">⚡ How Avatar Streaming Works:</div>
+    <div style="font-size: 12px; color: var(--muted); line-height: 1.6;">
+      • 📸 <strong>Face extracted once</strong> - Only 50KB data<br>
+      • 🎭 <strong>Expressions tracked</strong> - Blink, smile, talk (tiny data)<br>
+      • 🎤 <strong>Audio only</strong> - Voice is compressed<br>
+      • 💾 <strong>99% less data</strong> than normal video!<br>
+      • 🚀 Perfect for low-bandwidth connections
+    </div>
+  </div>
+  
+</div>

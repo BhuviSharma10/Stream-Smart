@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreamSmart | Premium</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: #0a0a0a;  /* MATCHED with main app */
+      color: #f0f0f0;        /* MATCHED with main app */
+      overflow-x: hidden;
+    }
+
+    /* Animated grid background - SAME as main app */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Soft glowing orbs - less intense than before */
+    .glow-orb {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0,200,255,0.08), transparent);
+      border-radius: 50%;
+      filter: blur(60px);
+      z-index: -1;
+      animation: floatSlow 15s infinite alternate;
+    }
+
+    .glow-orb:nth-child(1) {
+      top: 20%;
+      left: -100px;
+    }
+
+    .glow-orb:nth-child(2) {
+      bottom: 10%;
+      right: -100px;
+      background: radial-gradient(circle, rgba(0,255,136,0.06), transparent);
+      animation-delay: 5s;
+    }
+
+    @keyframes floatSlow {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(100px, 50px); }
+    }
+
+    .main {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      animation: fadeUp 1s ease;
+    }
+
+    .hero h1 {
+      font-size: 80px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      text-shadow: 0 0 30px rgba(0,200,255,0.3);
+    }
+
+    .hero h1 span {
+      color: #00c8ff;
+    }
+
+    .tagline {
+      margin-top: 12px;
+      color: #666;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+    }
+
+    /* BADGE - MATCHED with main app */
+    .badge-demo {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: #00c8ff;
+      border: 1px solid #00c8ff;
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+
+    /* BUTTON - MATCHED with main app */
+    .btn {
+      margin-top: 30px;
+      padding: 14px 36px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      background: #00c8ff;
+      color: #000;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.2s;
+      box-shadow: 0 0 15px rgba(0,200,255,0.3);
+      letter-spacing: 1px;
+    }
+
+    .btn:hover {
+      background: #00aadd;
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(0,200,255,0.5);
+    }
+
+    /* FEATURES - MATCHED with main app cards */
+    .features {
+      display: flex;
+      gap: 25px;
+      margin-top: 60px;
+      width: 100%;
+      max-width: 1100px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .card {
+      flex: 1;
+      min-width: 250px;
+      padding: 30px;
+      border-radius: 12px;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      transition: all 0.4s;
+      text-align: center;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: #00c8ff;
+      box-shadow: 0 0 20px rgba(0,200,255,0.15);
+    }
+
+    .card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #00c8ff;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #888;
+      line-height: 1.6;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    footer {
+      margin-top: 60px;
+      text-align: center;
+      color: #444;
+      font-size: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      padding-bottom: 10px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 680px) {
+      .hero h1 { font-size: 48px; }
+      .features { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Soft glowing orbs (subtle, not overpowering) -->
+  <div class="glow-orb"></div>
+  <div class="glow-orb"></div>
+
+  <div class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="badge-demo">EC606 — ECLIPSE 6.0</div>
+      <h1>Stream<span>Smart</span></h1>
+      <p class="tagline">// adaptive education streaming for low-bandwidth India</p>
+      <button class="btn" onclick="goToApp()">Launch App →</button>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="features">
+      <div class="card">
+        <h3>🎙 AI Transcription</h3>
+        <p>Real-time lecture transcription using advanced AI. Works even on weak audio.</p>
+      </div>
+      <div class="card">
+        <h3>⚡ Delta Streaming</h3>
+        <p>Sends only what changes — background once, face + hands continuously. Up to 70% less data!</p>
+      </div>
+      <div class="card">
+        <h3>📶 Smart Bandwidth AI</h3>
+        <p>Auto-switches between video, audio, and text based on your internet speed.</p>
+      </div>
+    </div>
+
+    <footer>
+      EC606 Eclipse 6.0 • StreamSmart
+    </footer>
+
+  </div>
+
+  <script>
+    function goToApp() {
+      console.log("Launch App button clicked!");
+      window.location.href = '/main';
+    }
+  </script>
+
+</body>
+</html>
